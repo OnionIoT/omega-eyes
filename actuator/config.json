@@ -1,0 +1,5 @@
+{
+	"server": "MQTT Server IP or URL here",
+	"port": "MQTT Server port here as a number",
+	"topic": "MQTT topic to subscribe to"
+}
