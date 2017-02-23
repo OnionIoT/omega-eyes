@@ -9,7 +9,6 @@ import cameraControl
 ### MAIN PROGRAM ###
 # find the directory of the script
 dirName = os.path.dirname(os.path.abspath(__file__))
-print 'dirName is ' + dirName
 
 # read the config file
 with open( '/'.join([dirName, 'config.json']) ) as f:
@@ -45,6 +44,7 @@ def handleMessage(topic, payload):
         # split payload contents
         positions = payload.split()
         if len(positions) == 2:
+			# double check which value is which! might have been switched!
             camera.move(int(positions[0]), int(positions[1]) )
             print "Received positions (%d, %d)"%(int(positions[0]), int(positions[1]))
         else:
