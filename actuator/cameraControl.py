@@ -14,11 +14,18 @@ class cameraControl:
         self.panServo = omegaMotors.Servo(self.panChannel, omegaMotors.SERVO_MIN_PULSE, omegaMotors.SERVO_MAX_PULSE)
         self.tiltServo = omegaMotors.Servo(self.tiltChannel, omegaMotors.SERVO_MIN_PULSE, omegaMotors.SERVO_MAX_PULSE)
 
+		# center the servos
+		self.panServo.setAngle(90)
+		self.tiltServo.setAngle(90)
+
     def move(self, panValue, tiltValue):
         print "Setting pan servo to ", self.calculateAngle(panValue)
         self.panServo.setAngle(self.calculateAngle(panValue))
-        print "Setting tilt servo to ", self.calculateAngle(tiltValue)
-        self.tiltServo.setAngle(self.calculateAngle(tiltValue))
+
+		# tilt - invert the measurement
+		newTiltValue = self.inputRange - tiltValue
+        print "Setting tilt servo to ", self.calculateAngle(newTiltValue)
+        self.tiltServo.setAngle(self.calculateAngle(newTiltValue))
 
     def calculateAngle(self, inputValue):
         angle = int(round(float(inputValue)/self.step))
