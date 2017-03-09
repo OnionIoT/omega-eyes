@@ -1,5 +1,5 @@
-int xInputPin = A0;
-int yInputPin = A1;
+int xInputPin = A1;
+int yInputPin = A0;
 
 int tolerance;
 
@@ -24,7 +24,7 @@ void loop() {
   // save the previous value
   xValuePrev = xValue;
   yValuePrev = yValue;
-  
+
   // read the new value
   xValue = analogRead(xInputPin);
   yValue = analogRead(yInputPin);
@@ -49,5 +49,3 @@ void printJoystickValue () {
   Serial.print(" ");
   Serial.println(yValue);
 }
-
-
