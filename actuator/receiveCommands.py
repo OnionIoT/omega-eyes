@@ -4,13 +4,16 @@ import paho.mqtt.client as mqtt
 import cameraControl
 
 
+# variables
+configFile = 'config.json'
+bCameraMemory = False
+
 # find the directory of the script
 dirName = os.path.dirname(os.path.abspath(__file__))
-configFile = 'config.json'
 
 # read the command line arguments
 try:
-	opts, args = getopt.getopt(sys.argv[1:], "hc:", ["help", "config="])
+	opts, args = getopt.getopt(sys.argv[1:], "hc:r", ["help", "config=", "relative"])
 except getopt.GetoptError:
 	printUsage()
 	sys.exit(2)
@@ -20,6 +23,8 @@ for opt, arg, in opts:
 		sys.exit()
 	elif opt in ("-c", "--config"):
 		configFile = arg
+	elif opt in ("-r", "--relative"):
+		bCameraMemory = True
 
 
 ### MAIN PROGRAM ###
@@ -36,10 +41,18 @@ def __main__():
 
 	## setup mqtt
 	mqttc = mqtt.Client()
-	try:
-		camera = cameraControl.cameraControl(config['panChannel'], config['tiltChannel'], config['inputRange'])
-	except:
-		print("ERROR: config file most contain settings for 'panChannel', 'tiltChannel', and 'inputRange'")
+	if not bCameraMemory:
+		try:
+			camera = cameraControl.cameraControl(config['panChannel'], config['tiltChannel'], config['inputRange'])
+		except:
+			print("ERROR: config file most contain settings for 'panChannel', 'tiltChannel', and 'inputRange'")
+			sys.exit(2)
+	else:
+		try:
+			camera = cameraControl.cameraControlRelative(config['panChannel'], config['tiltChannel'], config['inputRange'], config['maxAngleChange'])
+		except:
+			print("ERROR: config file most contain settings for 'panChannel', 'tiltChannel', 'inputRange', and 'maxAngleChange'")
+			sys.exit(2)
 
 	## define the mqtt callbacks
 	# when connection is made
@@ -66,9 +79,9 @@ def __main__():
 	        # split payload contents
 	        positions = payload.split()
 	        if len(positions) == 2:
-				# double check which value is which! might have been switched!
-	            camera.move(int(positions[0]), int(positions[1]) )
+	            # double check which value is which! might have been switched!
 	            print "Received positions (%d, %d)"%(int(positions[0]), int(positions[1]))
+	            camera.move(int(positions[0]), int(positions[1]) )
 	        else:
 	            print("Invalid number of arguments received")
 
